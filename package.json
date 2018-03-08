@@ -2,7 +2,7 @@
   "name": "babel-plugin-vue-jsx-modifier",
   "version": "0.0.1",
   "description": "Support modifiers(sync/capture/passive/once) in JSX",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write src/**/*.ts",
