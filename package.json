@@ -3,10 +3,16 @@
   "version": "0.0.1",
   "description": "Support modifiers(sync/capture/passive/once) in JSX",
   "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write src/**/*.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "url":
+      "https://github.com/wonderful-panda/babel-plugin-vue-jsx-modifier.git",
+    "type": "git"
   },
   "keywords": ["Vue", "JSX", "babel", "modifier"],
   "author": "Iwata Hidetaka",
