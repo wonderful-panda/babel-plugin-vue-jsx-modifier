@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "format": "prettier --write src/**/*.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "url":
@@ -21,11 +21,21 @@
     "@types/babel-core": "^6.25.3",
     "@types/babel-plugin-syntax-jsx": "^6.18.0",
     "@types/babel-types": "^7.0.1",
+    "@types/jest": "^22.2.0",
     "@types/node": "^9.4.6",
     "babel-core": "^6.26.0",
     "babel-plugin-syntax-jsx": "^6.18.0",
     "babel-types": "^6.26.0",
+    "jest": "^22.4.2",
     "prettier": "^1.11.1",
+    "ts-jest": "^22.4.1",
     "typescript": "^2.7.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "node", "json"]
   }
 }

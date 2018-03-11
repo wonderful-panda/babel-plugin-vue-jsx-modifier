@@ -2,16 +2,14 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "declaration": true,
     "sourceMap": true,
-    "outDir": "./lib",
+    "noEmit": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": true
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": ["./src/__test__/*.ts"]
+  "include": ["./**/*.ts"]
 }
