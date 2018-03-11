@@ -1,0 +1,14 @@
+sudo: false
+language: node_js
+node_js:
+- stable
+script:
+- npm run build-all
+deploy:
+  provider: npm
+  email: iwata0303@gmail.com
+  on:
+    tags: true
+  skip_cleanup: true
+  api_key:
+    secure: rs3KjQds6Ya9aICY6e3PjRDZE5/ukMhRN4m3WorGqUdcRMSWNnC531WWyzboqqSsg/VxefPxo2pdPugDok8PDq22w4Bf+WT9uphih0PiYlwQisc5ko1Ugw8ZpmnWTuR+ZrGnwdFfJsF8ARwXEHbE7j7gJwKKBeJnKwF52QxaaGVgEy9KMms8gpf6tegNs3g9gbDYFVaW2qDQwkBLq3eH6W5XEDrKA995o7XRq6ZS59U/pnVNY2Q5HCB7V+uvFcaLBXKvrKjEApmD2pg2Nrj/LplEOpAAdfyI7x5ipIOfPtroCui5y7XeKSPjvtmP8bL13xNS+C2NK2LXzWLk0vKBos+cz1/jeEmZp1hl+3cvtoUkL8t0BG1aQxzGewrTY9Mvzdi/HS6QKQu5GlpD3WBg7XI5fE5Y6fQ2HzhoLGqNBdlbNQ41BH1WtFv0H7y/yrepalMH27fmlkhP7rgeRovAvfg52K3Aa74lSjgWgQEFOsuNkjLO3qCxP9bdpJHjLsu9wTlOXcUbKDASXog6EsbTf/aHP8yleHGitJV0wZItfPEU5FgUkeo+eqbB5Uz6tQNoCntWkSO8hwC1Rm6Z2qGyc0f4KrwZqdXkgEgkUJlLGKHW2H/ZJsyEEZAAIOaE88fUJPSvWQfkLngn44bL/1H0MSN+QGqk8YXpCCFsFsVqhvo=

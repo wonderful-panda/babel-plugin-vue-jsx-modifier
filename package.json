@@ -6,6 +6,8 @@
   "typings": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "build-all": "npm-run-all check-format build test",
+    "check-format": "prettier --list-different src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
     "test": "jest"
   },
@@ -27,6 +29,7 @@
     "babel-plugin-syntax-jsx": "^6.18.0",
     "babel-types": "^6.26.0",
     "jest": "^22.4.2",
+    "npm-run-all": "^4.1.2",
     "prettier": "^1.11.1",
     "ts-jest": "^22.4.1",
     "typescript": "^2.7.2"
