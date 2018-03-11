@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-vue-jsx-modifier",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Support modifiers(sync/capture/passive/once) in JSX",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -12,11 +12,15 @@
     "test": "jest"
   },
   "repository": {
-    "url":
-      "https://github.com/wonderful-panda/babel-plugin-vue-jsx-modifier.git",
+    "url": "https://github.com/wonderful-panda/babel-plugin-vue-jsx-modifier.git",
     "type": "git"
   },
-  "keywords": ["Vue", "JSX", "babel", "modifier"],
+  "keywords": [
+    "Vue",
+    "JSX",
+    "babel",
+    "modifier"
+  ],
   "author": "Iwata Hidetaka",
   "license": "MIT",
   "devDependencies": {
@@ -39,6 +43,13 @@
       "^.+\\.tsx?$": "ts-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "node", "json"]
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "node",
+      "json"
+    ]
   }
 }
