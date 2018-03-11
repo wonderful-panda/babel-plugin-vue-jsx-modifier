@@ -170,3 +170,41 @@ Same as `__capture`, except for prefix (`~`)
 #### `__captureOnce`
 
 Same as `__capture`, except for prefix (`~!`)
+
+## Miscellaneous
+
+### Why don't use existing plugins?
+
+There are similar projects.
+
+* [babel-plugin-jsx-event-modifiers](https://github.com/nickmessing/babel-plugin-jsx-event-modifiers)
+* [babel-plugin-vue-jsx-sync](https://github.com/njleonzhang/babel-plugin-vue-jsx-sync)
+
+I uses TypeScript, and try to make Vue+JSX more typesafe by [vue-tsx-support](https://github.com/wonderful-panda/vue-tsx-support).
+
+`babel-plugin-jsx-event-modifiers` uses JSX namespaced attribute (like `onKeyup:up`),
+but TypeScript does not support it.
+
+`babel-plugin-vue-jsx-sync` requires to change attribute name (e.g. `visible` to `visible$sync`).
+But changing name will break typesafety provided by `vue-tsx-support`.
+(e.g. if `visible` is required, `<Component visible$sync={ this.value } />` will cause compilation error)
+
+These are the reason why I can't use them and make another plugin.
+
+### Other modifiers?
+
+Some other modifiers (`.stop`, `.prevent`, `.enter`, ...) are available in [vue-tsx-support](https://github.com/wonderful-panda/vue-tsx-support). (Sorry, undocumented yet)
+
+Short example is below:
+
+```typescript
+import Vue, { VNode } from "vue";
+import { modifiers as m } from "vue-tsx-support";
+
+export default Vue.extend({
+  /* snip */
+  render(): VNode {
+    return <div onKeydown={ m.tab.prevent(this.onTabkeyDown) }>;
+  }
+});
+```
