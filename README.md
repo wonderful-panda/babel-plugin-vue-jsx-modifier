@@ -106,7 +106,7 @@ NOTE: They should be removed by babel, and will throw Error if called at runtime
 
 ### Prop modifier
 
-#### `__sync`
+#### \_\_\sync
 
 Transpile this code
 
@@ -125,7 +125,7 @@ Transpile this code
 These modifiers can be used with event handler.
 Transipilation will fail if target JSX attribute name does not start with `on` or `nativeOn`
 
-#### `__capture`
+#### \_\_capture
 
 ```jsx
 // original code
@@ -149,7 +149,7 @@ nativeOn is also supported
 }} />
 ```
 
-#### `__passive`
+#### \_\_passive
 
 Same as `__capture`, except for prefix (`&`)
 
@@ -163,11 +163,11 @@ Same as `__capture`, except for prefix (`&`)
 }} />
 ```
 
-#### `__once`
+#### \_\_once
 
 Same as `__capture`, except for prefix (`~`)
 
-#### `__captureOnce`
+#### \_\_captureOnce
 
 Same as `__capture`, except for prefix (`~!`)
 
@@ -182,14 +182,15 @@ There are similar projects.
 
 I uses TypeScript, and try to make Vue+JSX more typesafe by [vue-tsx-support](https://github.com/wonderful-panda/vue-tsx-support).
 
-`babel-plugin-jsx-event-modifiers` uses JSX namespaced attribute (like `onKeyup:up`),
+`babel-plugin-jsx-event-modifiers` uses JSX namespaced attribute (like `onKeyup:up`),  
 but TypeScript does not support it.
 
-`babel-plugin-vue-jsx-sync` requires to change attribute name (e.g. `visible` to `visible$sync`).
-But changing name will break typesafety provided by `vue-tsx-support`.
-(e.g. if `visible` is required, `<Component visible$sync={ this.value } />` will cause compilation error)
+When using `babel-plugin-vue-jsx-sync`, we must specify different attribute name from original definition
+(e.g. `visible$sync` for `visible`),  
+but it will break type check provided by `vue-tsx-support`.
+(`"visible must be boolean"`, `"visible must be specified"`, etc)
 
-These are the reason why I can't use them and make another plugin.
+These are the reason why I wrote another plugin.
 
 ### Other modifiers?
 
@@ -204,7 +205,13 @@ import { modifiers as m } from "vue-tsx-support";
 export default Vue.extend({
   /* snip */
   render(): VNode {
-    return <div onKeydown={ m.tab.prevent(this.onTabkeyDown) }>;
+    return (
+      // modifiers can be chained
+      <div onKeydown={m.tab.prevent(this.onTabkeyDown)}>
+        // modifiers can be used without event handler
+        <div onKeydown={m.enter.prevent}>/* snip */</div>
+      </div>
+    );
   }
 });
 ```
