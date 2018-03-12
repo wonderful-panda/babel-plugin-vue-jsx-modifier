@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/wonderful-panda/babel-plugin-vue-jsx-modifier.svg?branch=master)](https://travis-ci.org/wonderful-panda/babel-plugin-vue-jsx-modifier)
+
 # babel-plugin-vue-jsx-modifier
 
 Support template modifiers (.sync, .capture, etc) in JSX
@@ -106,7 +108,7 @@ NOTE: They should be removed by babel, and will throw Error if called at runtime
 
 ### Prop modifier
 
-#### \_\_\sync
+#### \_\_sync
 
 Transpile this code
 
