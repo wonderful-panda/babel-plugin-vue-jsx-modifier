@@ -1,88 +1,139 @@
 import * as babel from "babel-core";
 import plugin from "../..";
 
-const plugins = [plugin];
+function transform(code: string): string | undefined {
+  const opts: babel.TransformOptions = {
+    plugins: [plugin],
+    generatorOpts: { quotes: "single" }
+  };
+  const ret = babel.transform(code, opts);
+  return ret.code;
+}
 
 describe("__sync", () => {
   it("basic functionary", () => {
-    const { code } = babel.transform(
-      `<MyComponent foo={ __sync(state.fooValue) } />`,
-      { plugins }
-    );
+    const code = transform(`<MyComponent foo={ __sync(state.fooValue) } />`);
     expect(code).toMatchSnapshot();
   });
 
   it("object name of __sync method is just ignored", () => {
-    const { code } = babel.transform(
-      `<MyComponent foo={ xxx.__sync(state.fooValue) } />`,
-      { plugins }
+    const code = transform(
+      `<MyComponent foo={ xxx.__sync(state.fooValue) } />`
     );
     expect(code).toMatchSnapshot();
   });
 
   it("works for deep member expression", () => {
-    const { code } = babel.transform(
-      `<MyComponent foo={ __sync(state.foo.bar.baz) } />`,
-      { plugins }
-    );
+    const code = transform(`<MyComponent foo={ __sync(state.foo.bar.baz) } />`);
+    expect(code).toMatchSnapshot();
+  });
+
+  it("works for literal member expression", () => {
+    const code = transform(`<MyComponent foo={ __sync(state['foo-key']) } />`);
     expect(code).toMatchSnapshot();
   });
 
   it("update handlers of multiple sync props are in same object", () => {
-    const { code } = babel.transform(
-      `<MyComponent foo={ __sync(state.fooValue) } bar={ __sync(state.barValue) } />`,
-      { plugins }
+    const code = transform(
+      `<MyComponent foo={ __sync(state.fooValue) } bar={ __sync(state.barValue) } />`
+    );
+    expect(code).toMatchSnapshot();
+  });
+
+  it("avoid using argument name which shadows existing variables", () => {
+    const code = transform(
+      `const _v0 = <MyComponent foo={ __sync(state.fooValue) } bar={ __sync(state.barValue) } />;`
     );
     expect(code).toMatchSnapshot();
   });
 
   it("update handler of kebab-case prop should be camelCase", () => {
-    const { code } = babel.transform(
-      `<MyComponent foo-bar-baz={ __sync(state.value ) } />`,
-      { plugins }
+    const code = transform(
+      `<MyComponent foo-bar-baz={ __sync(state.value ) } />`
     );
-    expect(code).toMatch(/\"update:fooBarBaz\":/);
+    expect(code).toMatch(/'update:fooBarBaz':/);
   });
 
   it("Throw error if sprecified in event handler", () => {
     expect(() => {
-      babel.transform(`<div onClick={ __sync(this.onClick) } />`, { plugins });
+      transform(`<div onClick={ __sync(this.onClick) } />`);
     }).toThrow(/only in component prop/);
 
     expect(() => {
-      babel.transform(
-        `<MyComponent nativeOnClick={ __sync(this.onClick) } />`,
-        { plugins }
-      );
+      transform(`<MyComponent nativeOnClick={ __sync(this.onClick) } />`);
     }).toThrow(/only in component prop/);
   });
 
   it("Throw error if argument is not MemberExpression", () => {
     expect(() => {
-      babel.transform(`<div foo={ __sync(data) } />`, { plugins });
+      transform(`<div foo={ __sync(data) } />`);
     }).toThrow(/must be MemberExpression/);
   });
 });
 
 describe("__capture", () => {
-  it("basic functionary", () => {
-    const { code } = babel.transform(
-      `<MyComponent nativeOnScroll={ __capture(this.onScrollCapture) } />`,
-      { plugins }
+  it("basic functionary (on)", () => {
+    const code = transform(
+      `<div onScroll={ __capture(this.onScrollCapture) } />`
+    );
+    expect(code).toMatchSnapshot();
+  });
+
+  it("basic functionary (nativeOn)", () => {
+    const code = transform(
+      `<MyComponent nativeOnScroll={ __capture(this.onScrollCapture) } />`
     );
     expect(code).toMatchSnapshot();
   });
 
   it("Throw error if sprecified in other than event handler", () => {
     expect(() => {
-      babel.transform(`<div foo={ __capture(this.onClick) } />`, { plugins });
+      transform(`<div foo={ __capture(this.onClick) } />`);
     }).toThrow(/only in event handler/);
+  });
 
-    expect(() => {
-      babel.transform(
-        `<MyComponent nativeOnClick={ __sync(this.onClick) } />`,
-        { plugins }
-      );
-    }).toThrow(/only in component prop/);
+  it("Event name conversion (onFooBar -> fooBar)", () => {
+    const code = transform(`<div onFooBar={ __capture(handler) } />`);
+    expect(code).toMatch(/'!fooBar': /);
+  });
+
+  it("Event name conversion (nativeOnFooBar -> fooBar)", () => {
+    const code = transform(`<div nativeOnFooBar={ __capture(handler) } />`);
+    expect(code).toMatch(/'!fooBar': /);
+  });
+
+  it("Event name conversion (on-foo-bar -> foo-bar)", () => {
+    const code = transform(`<div on-foo-bar={ __capture(handler) } />`);
+    expect(code).toMatch(/'!foo-bar': /);
+  });
+
+  it("Event name conversion (nativeOn-foo-bar -> foo-bar)", () => {
+    const code = transform(`<div nativeOn-foo-bar={ __capture(handler) } />`);
+    expect(code).toMatch(/'!foo-bar': /);
+  });
+});
+
+describe("__passive", () => {
+  it("basic functionary", () => {
+    const code = transform(
+      `<div onScroll={ __passive(this.onScrollCapture) } />`
+    );
+    expect(code).toMatch(/'&scroll':/);
+  });
+});
+
+describe("__once", () => {
+  it("basic functionary", () => {
+    const code = transform(`<div onScroll={ __once(this.onScrollCapture) } />`);
+    expect(code).toMatch(/'~scroll':/);
+  });
+});
+
+describe("__captureOnce", () => {
+  it("basic functionary", () => {
+    const code = transform(
+      `<div onScroll={ __captureOnce(this.onScrollCapture) } />`
+    );
+    expect(code).toMatch(/'~!scroll':/);
   });
 });
