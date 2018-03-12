@@ -18,6 +18,6 @@ export function __passive<T extends (...args: any[]) => any>(_: T): T {
   throw new Error(errmsg);
 }
 
-export function __captureOne<T extends (...args: any[]) => any>(_: T): T {
+export function __captureOnce<T extends (...args: any[]) => any>(_: T): T {
   throw new Error(errmsg);
 }
