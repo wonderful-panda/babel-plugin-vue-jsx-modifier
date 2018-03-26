@@ -110,15 +110,29 @@ NOTE: They should be removed by babel, and will throw Error if called at runtime
 
 #### \_\_sync
 
-Transpile this code
+Insert handler which listens update event from child
 
 ```jsx
 // original code
-<MyComponent foo={ _sync(this.foo) } />
+<MyComponent foo={ __sync(this.foo) } />
 
 // transpiled code
 <MyComponent foo={ this.foo } {...{
   on: { "update:foo": { _v0 => { this.foo = _v0; } }}
+}} />
+```
+
+#### \_\_relay
+
+Similar to `__sync`, and re-emit update event to parent instead of direct assignment.
+
+```jsx
+// original code
+<MyComponent foo={ __relay(this.fooValue) } />
+
+// transpiled code
+<MyComponent foo={ this.fooValue } {...{
+  on: { "update:foo": { _v0 => { this.$emit("update:fooValue", _v0); } }}
 }} />
 ```
 
@@ -131,7 +145,7 @@ Transipilation will fail if target JSX attribute name does not start with `on` o
 
 ```jsx
 // original code
-<div onClick={ _capture(this.onClick) } />
+<div onClick={ __capture(this.onClick) } />
 
 // transpiled code
 <div {...{
@@ -143,7 +157,7 @@ nativeOn is also supported
 
 ```jsx
 // original code
-<MyComponent nativeOnClick={ _capture(this.onClick) } />
+<MyComponent nativeOnClick={ __capture(this.onClick) } />
 
 // transpiled code
 <MyComponent {...{
@@ -157,7 +171,7 @@ Same as `__capture`, except for prefix (`&`)
 
 ```jsx
 // original code
-<div onScroll={ _passive(this.onScroll) } />
+<div onScroll={ __passive(this.onScroll) } />
 
 // transpiled code
 <div {...{
