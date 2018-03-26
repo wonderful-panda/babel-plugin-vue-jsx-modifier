@@ -71,6 +71,46 @@ describe("__sync", () => {
   });
 });
 
+describe("__relay", () => {
+  it("basic functionary", () => {
+    const code = transform(`<MyComponent foo={ __relay(this.fooValue) } />`);
+    expect(code).toMatchSnapshot();
+  });
+
+  it("works for literal MemberExpression", () => {
+    const code = transform(`<MyComponent foo={ __relay(this['foo-key']) } />`);
+    expect(code).toMatchSnapshot();
+  });
+
+  it("works for computed MemberExpression", () => {
+    const code = transform(`<MyComponent foo={ __relay(this[fooKey]) } />`);
+    expect(code).toMatchSnapshot();
+  });
+
+  it("update handlers of multiple sync/relay props are in same object", () => {
+    const code = transform(
+      `<MyComponent foo={ __sync(this.fooValue) } bar={ __relay(this.barValue) } />`
+    );
+    expect(code).toMatchSnapshot();
+  });
+
+  it("Throw error if sprecified in event handler", () => {
+    expect(() => {
+      transform(`<div onClick={ __relay(this.onClick) } />`);
+    }).toThrow(/only in component prop/);
+
+    expect(() => {
+      transform(`<MyComponent nativeOnClick={ __relay(this.onClick) } />`);
+    }).toThrow(/only in component prop/);
+  });
+
+  it("Throw error if argument is not MemberExpression", () => {
+    expect(() => {
+      transform(`<div foo={ __relay(data) } />`);
+    }).toThrow(/must be MemberExpression/);
+  });
+});
+
 describe("__capture", () => {
   it("basic functionary (on)", () => {
     const code = transform(

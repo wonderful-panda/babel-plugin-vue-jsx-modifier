@@ -9,7 +9,7 @@ interface State {
 }
 
 type EventModifierName = "once" | "capture" | "passive" | "captureOnce";
-type ModifierName = "sync" | EventModifierName;
+type ModifierName = "sync" | "relay" | EventModifierName;
 
 const KnownAttrs = [
   "class",
@@ -24,6 +24,7 @@ const KnownAttrs = [
 
 const ModifierFuncNames: { [K in ModifierName]: string } = {
   sync: "__sync",
+  relay: "__relay",
   once: "__once",
   capture: "__capture",
   passive: "__passive",
@@ -103,8 +104,31 @@ function createAssignmentFunction(
   );
 }
 
+function createEmitFunction(
+  eventName: t.Expression,
+  argName: string
+): t.ArrowFunctionExpression {
+  /*
+   * <argName> => {
+   *   this.$emit("update:<propName>", <argName>);
+   * }
+   */
+  return t.arrowFunctionExpression(
+    [t.identifier(argName)],
+    t.blockStatement([
+      t.expressionStatement(
+        t.callExpression(
+          t.memberExpression(t.thisExpression(), t.identifier("$emit")),
+          [eventName, t.identifier(argName)]
+        )
+      )
+    ])
+  );
+}
+
 function processSyncModifier(
   state: State,
+  modifierName: "sync" | "relay",
   path: NodePath<t.CallExpression>,
   jsxAttrPath: NodePath<t.JSXAttribute>
 ): void {
@@ -119,27 +143,58 @@ function processSyncModifier(
     /^(domProps|on|nativeOn|hook)[\-_A-Z]/.test(attrName)
   ) {
     throw path.buildCodeFrameError(
-      `sync modifier can be used only in component prop`
+      `${modifierName} modifier can be used only in component prop`
     );
   }
   if (path.node.arguments.length !== 1) {
-    throw path.buildCodeFrameError(`sync modifier must have one argument`);
+    throw path.buildCodeFrameError(
+      `${modifierName} modifier must have one argument`
+    );
   }
   const arg = path.node.arguments[0];
   if (!t.isMemberExpression(arg)) {
     throw path.buildCodeFrameError(
-      `argument of sync modifier must be MemberExpression`
+      `argument of ${modifierName} modifier must be MemberExpression`
     );
   }
-  // remove sync call
-  path.replaceWith(arg);
-  // add update handler
-  state.on.push(
-    t.objectProperty(
-      t.stringLiteral(`update:${toCamelCase(attrName)}`),
-      createAssignmentFunction(arg, getUnusedVariableName(path.scope, "_v"))
-    )
-  );
+  if (modifierName == "sync") {
+    // remove sync call
+    path.replaceWith(arg);
+    // add update handler
+    state.on.push(
+      t.objectProperty(
+        t.stringLiteral(`update:${toCamelCase(attrName)}`),
+        createAssignmentFunction(arg, getUnusedVariableName(path.scope, "_v"))
+      )
+    );
+  } else {
+    // relay
+    let eventName: t.Expression;
+    if (arg.computed) {
+      if (t.isStringLiteral(arg.property)) {
+        eventName = t.stringLiteral("update:" + arg.property.value);
+      } else {
+        eventName = t.binaryExpression(
+          "+",
+          t.stringLiteral("update:"),
+          arg.property
+        );
+      }
+    } else if (t.isIdentifier(arg.property)) {
+      eventName = t.stringLiteral("update:" + arg.property.name);
+    } else {
+      throw path.buildCodeFrameError(`Failed to determine event name to emit`);
+    }
+    // remove sync call
+    path.replaceWith(arg);
+    // add update handler
+    state.on.push(
+      t.objectProperty(
+        t.stringLiteral(`update:${toCamelCase(attrName)}`),
+        createEmitFunction(eventName, getUnusedVariableName(path.scope, "_v"))
+      )
+    );
+  }
 }
 
 function processEventModifier(
@@ -205,8 +260,8 @@ const jsxOpeningElementVisitor: babel.Visitor<any> = {
     if (!modifier) {
       return;
     }
-    if (modifier === "sync") {
-      processSyncModifier(this, path, jsxAttrPath);
+    if (modifier === "sync" || modifier === "relay") {
+      processSyncModifier(this, modifier, path, jsxAttrPath);
     } else {
       processEventModifier(this, modifier, path, jsxAttrPath);
     }

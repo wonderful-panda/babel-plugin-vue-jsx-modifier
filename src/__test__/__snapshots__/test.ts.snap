@@ -16,6 +16,57 @@ exports[`__capture basic functionary (on) 1`] = `
 }} />;"
 `;
 
+exports[`__relay basic functionary 1`] = `
+"var _this = this;
+
+<MyComponent foo={this.fooValue} {...{
+  on: {
+    'update:foo': _v0 => {
+      _this.$emit('update:fooValue', _v0);
+    }
+  }
+}} />;"
+`;
+
+exports[`__relay update handlers of multiple sync/relay props are in same object 1`] = `
+"var _this = this;
+
+<MyComponent foo={_this.fooValue} bar={this.barValue} {...{
+  on: {
+    'update:foo': _v0 => {
+      _this.fooValue = _v0;
+    },
+    'update:bar': _v0 => {
+      _this.$emit('update:barValue', _v0);
+    }
+  }
+}} />;"
+`;
+
+exports[`__relay works for computed MemberExpression 1`] = `
+"var _this = this;
+
+<MyComponent foo={this[fooKey]} {...{
+  on: {
+    'update:foo': _v0 => {
+      _this.$emit('update:' + fooKey, _v0);
+    }
+  }
+}} />;"
+`;
+
+exports[`__relay works for literal MemberExpression 1`] = `
+"var _this = this;
+
+<MyComponent foo={this['foo-key']} {...{
+  on: {
+    'update:foo': _v0 => {
+      _this.$emit('update:foo-key', _v0);
+    }
+  }
+}} />;"
+`;
+
 exports[`__sync avoid using argument name which shadows existing variables 1`] = `
 "const _v0 = <MyComponent foo={state.fooValue} bar={state.barValue} {...{
   on: {

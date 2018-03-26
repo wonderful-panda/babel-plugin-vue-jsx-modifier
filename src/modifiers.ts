@@ -6,6 +6,10 @@ export function __sync<T>(_: T): T {
   throw new Error(errmsg);
 }
 
+export function __relay<T>(_: T): T {
+  throw new Error(errmsg);
+}
+
 export function __capture<T extends (...args: any[]) => any>(_: T): T {
   throw new Error(errmsg);
 }
