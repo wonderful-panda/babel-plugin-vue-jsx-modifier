@@ -1,9 +1,9 @@
 sudo: false
 language: node_js
 node_js:
-- stable
+  - stable
 script:
-- npm run build-all
+  - yarn build-all
 deploy:
   provider: npm
   email: iwata0303@gmail.com
