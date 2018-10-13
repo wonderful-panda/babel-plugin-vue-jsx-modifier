@@ -278,23 +278,27 @@ export = function() {
     name: "vue-jsx-modifier",
     inherits: jsx,
     visitor: {
-      JSXOpeningElement(path) {
-        const on = [] as t.ObjectProperty[];
-        const nativeOn = [] as t.ObjectProperty[];
-        path.traverse(jsxOpeningElementVisitor, { on, nativeOn });
-        if (on.length > 0 || nativeOn.length > 0) {
-          const vnodeData = t.objectExpression([]);
-          for (const key of ["on", "nativeOn"]) {
-            const obj = key === "on" ? on : nativeOn;
-            if (obj.length == 0) {
-              continue;
+      Program(path) {
+        path.traverse({
+          JSXOpeningElement(path) {
+            const on = [] as t.ObjectProperty[];
+            const nativeOn = [] as t.ObjectProperty[];
+            path.traverse(jsxOpeningElementVisitor, { on, nativeOn });
+            if (on.length > 0 || nativeOn.length > 0) {
+              const vnodeData = t.objectExpression([]);
+              for (const key of ["on", "nativeOn"]) {
+                const obj = key === "on" ? on : nativeOn;
+                if (obj.length == 0) {
+                  continue;
+                }
+                vnodeData.properties.push(
+                  t.objectProperty(t.identifier(key), t.objectExpression(obj))
+                );
+              }
+              path.node.attributes.push(t.jsxSpreadAttribute(vnodeData) as any);
             }
-            vnodeData.properties.push(
-              t.objectProperty(t.identifier(key), t.objectExpression(obj))
-            );
           }
-          path.node.attributes.push(t.jsxSpreadAttribute(vnodeData) as any);
-        }
+        });
       }
     }
   };
