@@ -3,7 +3,7 @@
 exports[`__capture basic functionary (nativeOn) 1`] = `
 "<MyComponent {...{
   nativeOn: {
-    '!scroll': this.onScrollCapture
+    \\"!scroll\\": this.onScrollCapture
   }
 }} />;"
 `;
@@ -11,57 +11,49 @@ exports[`__capture basic functionary (nativeOn) 1`] = `
 exports[`__capture basic functionary (on) 1`] = `
 "<div {...{
   on: {
-    '!scroll': this.onScrollCapture
+    \\"!scroll\\": this.onScrollCapture
   }
 }} />;"
 `;
 
 exports[`__relay basic functionary 1`] = `
-"var _this = this;
-
-<MyComponent foo={this.fooValue} {...{
+"<MyComponent foo={this.fooValue} {...{
   on: {
-    'update:foo': _v0 => {
-      _this.$emit('update:fooValue', _v0);
+    \\"update:foo\\": _v0 => {
+      this.$emit(\\"update:fooValue\\", _v0);
     }
   }
 }} />;"
 `;
 
 exports[`__relay update handlers of multiple sync/relay props are in same object 1`] = `
-"var _this = this;
-
-<MyComponent foo={_this.fooValue} bar={this.barValue} {...{
+"<MyComponent foo={this.fooValue} bar={this.barValue} {...{
   on: {
-    'update:foo': _v0 => {
-      _this.fooValue = _v0;
+    \\"update:foo\\": _v0 => {
+      this.fooValue = _v0;
     },
-    'update:bar': _v0 => {
-      _this.$emit('update:barValue', _v0);
+    \\"update:bar\\": _v0 => {
+      this.$emit(\\"update:barValue\\", _v0);
     }
   }
 }} />;"
 `;
 
 exports[`__relay works for computed MemberExpression 1`] = `
-"var _this = this;
-
-<MyComponent foo={this[fooKey]} {...{
+"<MyComponent foo={this[fooKey]} {...{
   on: {
-    'update:foo': _v0 => {
-      _this.$emit('update:' + fooKey, _v0);
+    \\"update:foo\\": _v0 => {
+      this.$emit(\\"update:\\" + fooKey, _v0);
     }
   }
 }} />;"
 `;
 
 exports[`__relay works for literal MemberExpression 1`] = `
-"var _this = this;
-
-<MyComponent foo={this['foo-key']} {...{
+"<MyComponent foo={this['foo-key']} {...{
   on: {
-    'update:foo': _v0 => {
-      _this.$emit('update:foo-key', _v0);
+    \\"update:foo\\": _v0 => {
+      this.$emit(\\"update:foo-key\\", _v0);
     }
   }
 }} />;"
@@ -70,10 +62,10 @@ exports[`__relay works for literal MemberExpression 1`] = `
 exports[`__sync avoid using argument name which shadows existing variables 1`] = `
 "const _v0 = <MyComponent foo={state.fooValue} bar={state.barValue} {...{
   on: {
-    'update:foo': _v1 => {
+    \\"update:foo\\": _v1 => {
       state.fooValue = _v1;
     },
-    'update:bar': _v1 => {
+    \\"update:bar\\": _v1 => {
       state.barValue = _v1;
     }
   }
@@ -83,7 +75,7 @@ exports[`__sync avoid using argument name which shadows existing variables 1`] =
 exports[`__sync basic functionary 1`] = `
 "<MyComponent foo={state.fooValue} {...{
   on: {
-    'update:foo': _v0 => {
+    \\"update:foo\\": _v0 => {
       state.fooValue = _v0;
     }
   }
@@ -93,7 +85,7 @@ exports[`__sync basic functionary 1`] = `
 exports[`__sync object name of __sync method is just ignored 1`] = `
 "<MyComponent foo={state.fooValue} {...{
   on: {
-    'update:foo': _v0 => {
+    \\"update:foo\\": _v0 => {
       state.fooValue = _v0;
     }
   }
@@ -103,10 +95,10 @@ exports[`__sync object name of __sync method is just ignored 1`] = `
 exports[`__sync update handlers of multiple sync props are in same object 1`] = `
 "<MyComponent foo={state.fooValue} bar={state.barValue} {...{
   on: {
-    'update:foo': _v0 => {
+    \\"update:foo\\": _v0 => {
       state.fooValue = _v0;
     },
-    'update:bar': _v0 => {
+    \\"update:bar\\": _v0 => {
       state.barValue = _v0;
     }
   }
@@ -116,7 +108,7 @@ exports[`__sync update handlers of multiple sync props are in same object 1`] = 
 exports[`__sync works for deep member expression 1`] = `
 "<MyComponent foo={state.foo.bar.baz} {...{
   on: {
-    'update:foo': _v0 => {
+    \\"update:foo\\": _v0 => {
       state.foo.bar.baz = _v0;
     }
   }
@@ -126,7 +118,7 @@ exports[`__sync works for deep member expression 1`] = `
 exports[`__sync works for literal member expression 1`] = `
 "<MyComponent foo={state['foo-key']} {...{
   on: {
-    'update:foo': _v0 => {
+    \\"update:foo\\": _v0 => {
       state['foo-key'] = _v0;
     }
   }

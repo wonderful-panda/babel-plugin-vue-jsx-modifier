@@ -1,7 +1,7 @@
-import * as babel from "babel-core";
-import * as t from "babel-types";
-import { NodePath, Scope } from "babel-traverse";
-import jsx from "babel-plugin-syntax-jsx";
+import * as babel from "@babel/core";
+import * as t from "@babel/types";
+import { NodePath, Scope } from "@babel/traverse";
+import jsx from "@babel/plugin-syntax-jsx";
 
 interface State {
   on: t.ObjectProperty[];
@@ -226,7 +226,12 @@ function processEventModifier(
   const arg = path.node.arguments[0];
   if (t.isSpreadElement(arg)) {
     throw path.buildCodeFrameError(
-      `${modifierName} modifier must have one argument`
+      `${modifierName} modifier have one argument`
+    );
+  }
+  if (t.isJSXNamespacedName(arg)) {
+    throw path.buildCodeFrameError(
+      `${modifierName} modifier argument must not be JSXNamespacedName`
     );
   }
   // remove JSXAttribute
@@ -288,7 +293,7 @@ export = function() {
               t.objectProperty(t.identifier(key), t.objectExpression(obj))
             );
           }
-          path.node.attributes.push(t.jSXSpreadAttribute(vnodeData) as any);
+          path.node.attributes.push(t.jsxSpreadAttribute(vnodeData) as any);
         }
       }
     }

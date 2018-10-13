@@ -1,13 +1,12 @@
-import * as babel from "babel-core";
+import * as babel from "@babel/core";
 import plugin from "../..";
 
 function transform(code: string): string | undefined {
   const opts: babel.TransformOptions = {
-    plugins: [plugin],
-    generatorOpts: { quotes: "single" }
+    plugins: [plugin]
   };
   const ret = babel.transform(code, opts);
-  return ret.code;
+  return ret ? ret.code || undefined : undefined;
 }
 
 describe("__sync", () => {
@@ -51,7 +50,7 @@ describe("__sync", () => {
     const code = transform(
       `<MyComponent foo-bar-baz={ __sync(state.value ) } />`
     );
-    expect(code).toMatch(/'update:fooBarBaz':/);
+    expect(code).toMatch(/"update:fooBarBaz":/);
   });
 
   it("Throw error if sprecified in event handler", () => {
@@ -134,22 +133,22 @@ describe("__capture", () => {
 
   it("Event name conversion (onFooBar -> fooBar)", () => {
     const code = transform(`<div onFooBar={ __capture(handler) } />`);
-    expect(code).toMatch(/'!fooBar': /);
+    expect(code).toMatch(/"!fooBar": /);
   });
 
   it("Event name conversion (nativeOnFooBar -> fooBar)", () => {
     const code = transform(`<div nativeOnFooBar={ __capture(handler) } />`);
-    expect(code).toMatch(/'!fooBar': /);
+    expect(code).toMatch(/"!fooBar": /);
   });
 
   it("Event name conversion (on-foo-bar -> foo-bar)", () => {
     const code = transform(`<div on-foo-bar={ __capture(handler) } />`);
-    expect(code).toMatch(/'!foo-bar': /);
+    expect(code).toMatch(/"!foo-bar": /);
   });
 
   it("Event name conversion (nativeOn-foo-bar -> foo-bar)", () => {
     const code = transform(`<div nativeOn-foo-bar={ __capture(handler) } />`);
-    expect(code).toMatch(/'!foo-bar': /);
+    expect(code).toMatch(/"!foo-bar": /);
   });
 });
 
@@ -158,14 +157,14 @@ describe("__passive", () => {
     const code = transform(
       `<div onScroll={ __passive(this.onScrollCapture) } />`
     );
-    expect(code).toMatch(/'&scroll':/);
+    expect(code).toMatch(/"&scroll":/);
   });
 });
 
 describe("__once", () => {
   it("basic functionary", () => {
     const code = transform(`<div onScroll={ __once(this.onScrollCapture) } />`);
-    expect(code).toMatch(/'~scroll':/);
+    expect(code).toMatch(/"~scroll":/);
   });
 });
 
@@ -174,6 +173,6 @@ describe("__captureOnce", () => {
     const code = transform(
       `<div onScroll={ __captureOnce(this.onScrollCapture) } />`
     );
-    expect(code).toMatch(/'~!scroll':/);
+    expect(code).toMatch(/"~!scroll":/);
   });
 });
