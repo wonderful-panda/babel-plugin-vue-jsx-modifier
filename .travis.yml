@@ -5,6 +5,7 @@ node_js:
 script:
 - yarn build-all
 deploy:
+  tag: alpha
   provider: npm
   email: iwata0303@gmail.com
   on:
