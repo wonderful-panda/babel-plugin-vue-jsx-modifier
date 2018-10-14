@@ -1,11 +1,10 @@
 sudo: false
 language: node_js
 node_js:
-- stable
+  - stable
 script:
-- yarn build-all
+  - yarn build-all
 deploy:
-  tag: alpha
   provider: npm
   email: iwata0303@gmail.com
   on:

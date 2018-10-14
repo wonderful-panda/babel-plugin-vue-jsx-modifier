@@ -8,8 +8,8 @@ Support template modifiers (.sync, .capture, etc) in JSX
 
 In Vue template, we can use some modifiers. See:
 
-* [.sync Modifier](https://vuejs.org/v2/guide/components.html#sync-Modifier)
-* [Event Modifiers](https://vuejs.org/v2/guide/events.html#Event-Modifiers)
+- [.sync Modifier](https://vuejs.org/v2/guide/components.html#sync-Modifier)
+- [Event Modifiers](https://vuejs.org/v2/guide/events.html#Event-Modifiers)
 
 ```html
 <my-component :is-active.sync="isActive"> <!-- sync modifier -->
@@ -57,6 +57,9 @@ And install this
 ```
 npm install babel-plugin-vue-jsx-modifier -D
 ```
+
+For babel 6, use 0.x  
+For babel 7, use 1.x
 
 ## Usage
 
@@ -193,8 +196,8 @@ Same as `__capture`, except for prefix (`~!`)
 
 There are similar projects.
 
-* [babel-plugin-jsx-event-modifiers](https://github.com/nickmessing/babel-plugin-jsx-event-modifiers)
-* [babel-plugin-vue-jsx-sync](https://github.com/njleonzhang/babel-plugin-vue-jsx-sync)
+- [babel-plugin-jsx-event-modifiers](https://github.com/nickmessing/babel-plugin-jsx-event-modifiers)
+- [babel-plugin-vue-jsx-sync](https://github.com/njleonzhang/babel-plugin-vue-jsx-sync)
 
 I uses TypeScript, and try to make Vue+JSX more typesafe by [vue-tsx-support](https://github.com/wonderful-panda/vue-tsx-support).
 
@@ -210,7 +213,7 @@ These are the reason why I wrote another plugin.
 
 ### Other modifiers?
 
-Some other modifiers (`.stop`, `.prevent`, `.enter`, ...) are available in [vue-tsx-support](https://github.com/wonderful-panda/vue-tsx-support). (Sorry, undocumented yet)
+Some other modifiers (`.stop`, `.prevent`, `.enter`, ...) are available in [vue-tsx-support](https://github.com/wonderful-panda/vue-tsx-support).
 
 Short example is below:
 
