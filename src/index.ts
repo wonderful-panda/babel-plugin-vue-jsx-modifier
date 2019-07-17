@@ -234,6 +234,11 @@ function processEventModifier(
       `${modifierName} modifier argument must not be JSXNamespacedName`
     );
   }
+  if (t.isArgumentPlaceholder(arg)) {
+    throw path.buildCodeFrameError(
+      `${modifierName} modifier argument must not be ArgumentPlaceholder`
+    );
+  }
   // remove JSXAttribute
   jsxAttrPath.remove();
   // add prefixed event handler
