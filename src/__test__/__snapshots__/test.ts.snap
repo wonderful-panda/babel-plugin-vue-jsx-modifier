@@ -39,6 +39,26 @@ exports[`__relay update handlers of multiple sync/relay props are in same object
 }} />;"
 `;
 
+exports[`__relay with 2 arguments (second argument is Identifier) 1`] = `
+"<MyComponent foo={this.fooValue} {...{
+  on: {
+    \\"update:foo\\": _v0 => {
+      emit(\\"update:fooValue\\", _v0);
+    }
+  }
+}} />;"
+`;
+
+exports[`__relay with 2 arguments (second argument is MemberExpression) 1`] = `
+"<MyComponent foo={this.fooValue} {...{
+  on: {
+    \\"update:foo\\": _v0 => {
+      ctx.emit(\\"update:fooValue\\", _v0);
+    }
+  }
+}} />;"
+`;
+
 exports[`__relay works for computed MemberExpression 1`] = `
 "<MyComponent foo={this[fooKey]} {...{
   on: {

@@ -106,21 +106,19 @@ function createAssignmentFunction(
 
 function createEmitFunction(
   eventName: t.Expression,
-  argName: string
+  argName: string,
+  emitMethod: t.Expression
 ): t.ArrowFunctionExpression {
   /*
    * <argName> => {
-   *   this.$emit("update:<propName>", <argName>);
+   *   <emitMethod>("update:<propName>", <argName>);
    * }
    */
   return t.arrowFunctionExpression(
     [t.identifier(argName)],
     t.blockStatement([
       t.expressionStatement(
-        t.callExpression(
-          t.memberExpression(t.thisExpression(), t.identifier("$emit")),
-          [eventName, t.identifier(argName)]
-        )
+        t.callExpression(emitMethod, [eventName, t.identifier(argName)])
       )
     ])
   );
@@ -146,52 +144,78 @@ function processSyncModifier(
       `${modifierName} modifier can be used only in component prop`
     );
   }
-  if (path.node.arguments.length !== 1) {
-    throw path.buildCodeFrameError(
-      `${modifierName} modifier must have one argument`
-    );
+  const args = path.node.arguments;
+  if (modifierName === "sync") {
+    if (args.length !== 1) {
+      throw path.buildCodeFrameError("__sync must have 1 argument");
+    }
+  } else {
+    // relay
+    if (args.length !== 1 && args.length !== 2) {
+      throw path.buildCodeFrameError("__relay must have 1 or 2 arguments");
+    }
   }
-  const arg = path.node.arguments[0];
-  if (!t.isMemberExpression(arg)) {
+  const arg0 = args[0];
+  if (!t.isMemberExpression(arg0)) {
     throw path.buildCodeFrameError(
       `argument of ${modifierName} modifier must be MemberExpression`
     );
   }
   if (modifierName == "sync") {
     // remove sync call
-    path.replaceWith(arg);
+    path.replaceWith(arg0);
     // add update handler
     state.on.push(
       t.objectProperty(
         t.stringLiteral(`update:${toCamelCase(attrName)}`),
-        createAssignmentFunction(arg, getUnusedVariableName(path.scope, "_v"))
+        createAssignmentFunction(arg0, getUnusedVariableName(path.scope, "_v"))
       )
     );
   } else {
     // relay
     let eventName: t.Expression;
-    if (arg.computed) {
-      if (t.isStringLiteral(arg.property)) {
-        eventName = t.stringLiteral("update:" + arg.property.value);
+    if (arg0.computed) {
+      if (t.isStringLiteral(arg0.property)) {
+        eventName = t.stringLiteral("update:" + arg0.property.value);
       } else {
         eventName = t.binaryExpression(
           "+",
           t.stringLiteral("update:"),
-          arg.property
+          arg0.property
         );
       }
-    } else if (t.isIdentifier(arg.property)) {
-      eventName = t.stringLiteral("update:" + arg.property.name);
+    } else if (t.isIdentifier(arg0.property)) {
+      eventName = t.stringLiteral("update:" + arg0.property.name);
     } else {
       throw path.buildCodeFrameError(`Failed to determine event name to emit`);
     }
     // remove sync call
-    path.replaceWith(arg);
+    path.replaceWith(arg0);
     // add update handler
+    let emitMethod: t.Expression;
+    if (args.length === 1) {
+      emitMethod = t.memberExpression(
+        t.thisExpression(),
+        t.identifier("$emit")
+      );
+    } else {
+      const arg1 = args[1];
+      if (!t.isIdentifier(arg1) && !t.isMemberExpression(arg1)) {
+        throw path.buildCodeFrameError(
+          `2nd argument of __relay must be Identifier or MemberExpression (e.g. 'ctx.emit')`
+        );
+      }
+      emitMethod = arg1;
+    }
+
     state.on.push(
       t.objectProperty(
         t.stringLiteral(`update:${toCamelCase(attrName)}`),
-        createEmitFunction(eventName, getUnusedVariableName(path.scope, "_v"))
+        createEmitFunction(
+          eventName,
+          getUnusedVariableName(path.scope, "_v"),
+          emitMethod
+        )
       )
     );
   }

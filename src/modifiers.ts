@@ -6,7 +6,10 @@ export function __sync<T>(_: T): T {
   throw new Error(errmsg);
 }
 
-export function __relay<T>(_: T): T {
+export function __relay<T>(
+  _: T,
+  _emit?: (name: string, value: any) => void
+): T {
   throw new Error(errmsg);
 }
 

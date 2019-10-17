@@ -76,6 +76,20 @@ describe("__relay", () => {
     expect(code).toMatchSnapshot();
   });
 
+  it("with 2 arguments (second argument is MemberExpression)", () => {
+    const code = transform(
+      `<MyComponent foo={ __relay(this.fooValue, ctx.emit) } />`
+    );
+    expect(code).toMatchSnapshot();
+  });
+
+  it("with 2 arguments (second argument is Identifier)", () => {
+    const code = transform(
+      `<MyComponent foo={ __relay(this.fooValue, emit) } />`
+    );
+    expect(code).toMatchSnapshot();
+  });
+
   it("works for literal MemberExpression", () => {
     const code = transform(`<MyComponent foo={ __relay(this['foo-key']) } />`);
     expect(code).toMatchSnapshot();
