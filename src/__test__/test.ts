@@ -15,6 +15,13 @@ describe("__sync", () => {
     expect(code).toMatchSnapshot();
   });
 
+  it("specify setter", () => {
+    const code = transform(
+      `<MyComponent foo={ __sync(state.fooValue, v => emit('fooValue', v)) } />`
+    );
+    expect(code).toMatchSnapshot();
+  });
+
   it("object name of __sync method is just ignored", () => {
     const code = transform(
       `<MyComponent foo={ xxx.__sync(state.fooValue) } />`

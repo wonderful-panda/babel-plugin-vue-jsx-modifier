@@ -145,30 +145,40 @@ function processSyncModifier(
     );
   }
   const args = path.node.arguments;
-  if (modifierName === "sync") {
-    if (args.length !== 1) {
-      throw path.buildCodeFrameError("__sync must have 1 argument");
-    }
-  } else {
-    // relay
-    if (args.length !== 1 && args.length !== 2) {
-      throw path.buildCodeFrameError("__relay must have 1 or 2 arguments");
-    }
+  if (args.length !== 1 && args.length !== 2) {
+    throw path.buildCodeFrameError(
+      `${modifierName} modifier must have 1 or 2 arguments`
+    );
   }
-  const arg0 = args[0];
+  const [arg0, arg1] = args;
   if (!t.isMemberExpression(arg0)) {
     throw path.buildCodeFrameError(
-      `argument of ${modifierName} modifier must be MemberExpression`
+      `1st argument of ${modifierName} modifier must be MemberExpression`
     );
   }
   if (modifierName == "sync") {
     // remove sync call
     path.replaceWith(arg0);
     // add update handler
+    let setter: t.Expression;
+    if (args.length === 1) {
+      setter = createAssignmentFunction(
+        arg0,
+        getUnusedVariableName(path.scope, "_v")
+      );
+    } else {
+      if (!t.isExpression(arg1)) {
+        throw path.buildCodeFrameError(
+          `2nd argument of ${modifierName} modifier must be Expression`
+        );
+      }
+      setter = arg1;
+    }
+
     state.on.push(
       t.objectProperty(
         t.stringLiteral(`update:${toCamelCase(attrName)}`),
-        createAssignmentFunction(arg0, getUnusedVariableName(path.scope, "_v"))
+        setter
       )
     );
   } else {
@@ -193,13 +203,12 @@ function processSyncModifier(
     path.replaceWith(arg0);
     // add update handler
     let emitMethod: t.Expression;
-    if (args.length === 1) {
+    if (!arg1) {
       emitMethod = t.memberExpression(
         t.thisExpression(),
         t.identifier("$emit")
       );
     } else {
-      const arg1 = args[1];
       if (!t.isIdentifier(arg1) && !t.isMemberExpression(arg1)) {
         throw path.buildCodeFrameError(
           `2nd argument of __relay must be Identifier or MemberExpression (e.g. 'ctx.emit')`

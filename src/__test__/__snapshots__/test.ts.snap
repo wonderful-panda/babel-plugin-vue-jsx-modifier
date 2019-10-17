@@ -112,6 +112,14 @@ exports[`__sync object name of __sync method is just ignored 1`] = `
 }} />;"
 `;
 
+exports[`__sync specify setter 1`] = `
+"<MyComponent foo={state.fooValue} {...{
+  on: {
+    \\"update:foo\\": v => emit('fooValue', v)
+  }
+}} />;"
+`;
+
 exports[`__sync update handlers of multiple sync props are in same object 1`] = `
 "<MyComponent foo={state.fooValue} bar={state.barValue} {...{
   on: {

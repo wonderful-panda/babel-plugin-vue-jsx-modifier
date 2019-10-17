@@ -2,7 +2,7 @@ const errmsg =
   "[vue-jsx-modifier] this method should be removed by babel.\n" +
   "Put 'babel-plugin-vue-jsx-modifier' into your babel configuration (before 'babel-plugin-transform-vue-jsx').";
 
-export function __sync<T>(_: T): T {
+export function __sync<T>(_value: T, _setter?: (value: T) => void): T {
   throw new Error(errmsg);
 }
 

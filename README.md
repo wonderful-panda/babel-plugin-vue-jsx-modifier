@@ -124,6 +124,18 @@ Insert handler which listens update event from child
 }} />
 ```
 
+You can specify setter code as second argument.
+
+```jsx
+// original code
+<MyComponent foo={ __sync(store.state.foo, v => store.commit("setFoo", v)) } />
+
+// transpiled code
+<MyComponent foo={ store.state.foo } {...{
+  on: { "update:foo": v => store.commit("setFoo", v) }
+}} />
+```
+
 #### \_\_relay
 
 Similar to `__sync`, and re-emit update event to parent instead of direct assignment.
@@ -226,23 +238,3 @@ These are the reason why I wrote another plugin.
 ### Other modifiers?
 
 Some other modifiers (`.stop`, `.prevent`, `.enter`, ...) are available in [vue-tsx-support](https://github.com/wonderful-panda/vue-tsx-support).
-
-Short example is below:
-
-```typescript
-import Vue, { VNode } from "vue";
-import { modifiers as m } from "vue-tsx-support";
-
-export default Vue.extend({
-  /* snip */
-  render(): VNode {
-    return (
-      // modifiers can be chained
-      <div onKeydown={m.tab.prevent(this.onTabkeyDown)}>
-        // modifiers can be used without event handler
-        <div onKeydown={m.enter.prevent}>/* snip */</div>
-      </div>
-    );
-  }
-});
-```
