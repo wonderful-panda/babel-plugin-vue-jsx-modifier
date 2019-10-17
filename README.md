@@ -12,8 +12,10 @@ In Vue template, we can use some modifiers. See:
 - [Event Modifiers](https://vuejs.org/v2/guide/events.html#Event-Modifiers)
 
 ```html
-<my-component :is-active.sync="isActive"> <!-- sync modifier -->
-  <div @scroll.passive="onScroll"> <!-- passive modifier -->
+<my-component :is-active.sync="isActive">
+  <!-- sync modifier -->
+  <div @scroll.passive="onScroll">
+    <!-- passive modifier -->
     <!-- snip -->
   </div>
 </my-component>
@@ -50,7 +52,7 @@ By this plugin, we can write equivalent JSX as below:
 
 ## Install
 
-First, install [babel-plugin-transform-vue-jsx](https://github.com/vuejs/babel-plugin-transform-vue-jsx)
+First, setup Vue environment and enable JSX transpilation (see https://github.com/vuejs/jsx).
 
 And install this
 
@@ -58,17 +60,14 @@ And install this
 npm install babel-plugin-vue-jsx-modifier -D
 ```
 
-For babel 6, use 0.x  
-For babel 7, use 1.x
-
 ## Usage
 
-put `"vue-jsx-modifier"` before `"transform-vue-jsx"` in your `.babelrc`:
+add `"vue-jsx-modifier"` to "plugins" in your `.babelrc`.
 
 ```json
 {
-  "presets": ["env"],
-  "plugins": ["vue-jsx-modifier", "transform-vue-jsx"]
+  "presets": ["@vue/babel-preset-jsx"],
+  "plugins": ["vue-jsx-modifier"]
 }
 ```
 
@@ -136,6 +135,19 @@ Similar to `__sync`, and re-emit update event to parent instead of direct assign
 // transpiled code
 <MyComponent foo={ this.fooValue } {...{
   on: { "update:foo": { _v0 => { this.$emit("update:fooValue", _v0); } }}
+}} />
+```
+
+You can specify `emit` method as second argument if you want to use method other than `this.$emit`.
+This is useful when using with `@vue/composition-api`
+
+```jsx
+// original code
+<MyComponent foo={ __relay(this.fooValue, ctx.emit) } />
+
+// transpiled code
+<MyComponent foo={ this.fooValue } {...{
+  on: { "update:foo": { _v0 => { ctx.emit("update:fooValue", _v0); } }}
 }} />
 ```
 
